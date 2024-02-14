@@ -1,5 +1,5 @@
 {
-    "private": true,
+    "private": false,
     "displayName": "Homebridge Delta VoiceIQ",
     "name": "homebridge-voiceiq",
     "version": "1.0.1",
