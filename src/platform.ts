@@ -52,10 +52,6 @@ export class DeltaVoiceIQ implements DynamicPlatformPlugin {
    */
   async discoverDevices() {
 
-    // EXAMPLE ONLY
-    // A real plugin you would discover accessories from the local network, cloud services
-    // or a user-defined array in the platform config.
-
     if (!this.config.token) {
       this.log.error('Please configure an authentication token to use this plugin.');
       return;

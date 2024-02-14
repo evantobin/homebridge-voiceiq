@@ -11,40 +11,36 @@ import { DeltaVoiceIQ } from './platform';
 export class DeltaVoiceIQLegacyFaucetAccessory {
   private service: Service;
 
-  private state = {
-    On: false,
-  };
+  on: boolean;
 
   constructor(
     private readonly platform: DeltaVoiceIQ,
     private readonly accessory: PlatformAccessory,
   ) {
 
+    this.on = false;
     // set accessory information
     this.accessory.getService(this.platform.Service.AccessoryInformation)!
       .setCharacteristic(this.platform.Characteristic.Manufacturer, 'Delta Faucet')
       .setCharacteristic(this.platform.Characteristic.Model, accessory.context.device.productId)
       .setCharacteristic(this.platform.Characteristic.SerialNumber, accessory.context.device.macAddress);
 
-    this.service = this.accessory.getService(this.platform.Service.Valve) || this.accessory.addService(this.platform.Service.Valve);
+    this.service = this.accessory.getService(this.platform.Service.Switch) || this.accessory.addService(this.platform.Service.Switch);
     this.service.setCharacteristic(this.platform.Characteristic.Name, accessory.context.device.name);
-    this.service.setCharacteristic(this.platform.Characteristic.ValveType, this.platform.Characteristic.ValveType.WATER_FAUCET);
 
-    this.service.getCharacteristic(this.platform.Characteristic.Active)
+    this.service.getCharacteristic(this.platform.Characteristic.On)
       .onSet(this.setOn.bind(this))
-      .onGet(this.getOn.bind(this));
-
-    this.service.getCharacteristic(this.platform.Characteristic.InUse)
-      .onGet(this.getOn.bind(this));
+      .onGet(this.getActive.bind(this));
 
   }
 
   async setOn(value: CharacteristicValue) {
-    this.state.On = value as boolean;
+    this.on = !this.on;
+    this.platform.log.debug(`Setting faucet to ${(this.on ? 'on' : 'off')}`);
     const url = 'https://device.legacy.deltafaucet.com/api/device/toggleWater?deviceId='
       + this.accessory.context.device.id
       + '&toggle='
-      + (this.state.On ? 'on' : 'off');
+      + (this.on ? 'on' : 'off');
     await axios.post(url, {},
       {
         headers: {
@@ -53,13 +49,13 @@ export class DeltaVoiceIQLegacyFaucetAccessory {
       },
     );
 
-    this.platform.log.debug('Set Characteristic On ->', value);
+    this.platform.log.debug('Set Characteristic On ->', this.on);
   }
 
-  getOn(): CharacteristicValue {
-    const isOn = this.state.On ? this.platform.Characteristic.Active.ACTIVE : this.platform.Characteristic.Active.INACTIVE;
+  getActive(): CharacteristicValue {
+    const isOn = this.on ? this.platform.Characteristic.Active.ACTIVE : this.platform.Characteristic.Active.INACTIVE;
 
-    this.platform.log.debug('Get Characteristic On ->', isOn);
+    this.platform.log.debug('Get Characteristic Active ->', isOn);
 
     return isOn;
   }
