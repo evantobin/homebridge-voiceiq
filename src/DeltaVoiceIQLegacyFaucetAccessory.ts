@@ -34,7 +34,8 @@ export class DeltaVoiceIQLegacyFaucetAccessory {
 
   }
 
-  async setOn(value: CharacteristicValue) {
+  /* eslint-disable @typescript-eslint/no-unused-vars */
+  async setOn(_value: CharacteristicValue) {
     this.on = !this.on;
     this.platform.log.debug(`Setting faucet to ${(this.on ? 'on' : 'off')}`);
     const url = 'https://device.legacy.deltafaucet.com/api/device/toggleWater?deviceId='
