@@ -11,10 +11,6 @@ import { DeltaVoiceIQ } from './platform';
 export class DeltaVoiceIQLegacyFaucetAccessory {
   private service: Service;
 
-  /**
-   * These are just used to create a working example
-   * You should implement your own code to track the state of your accessory
-   */
   private state = {
     On: false,
   };
@@ -44,7 +40,6 @@ export class DeltaVoiceIQLegacyFaucetAccessory {
   }
 
   async setOn(value: CharacteristicValue) {
-    // implement your own code to turn your device on/off
     this.state.On = value as boolean;
     const url = 'https://device.legacy.deltafaucet.com/api/device/toggleWater?deviceId='
       + this.accessory.context.device.id
